@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  #Это конфигурация Docker Compose для Tiny File Manager осного на веб-технологиях файлового менеджера.
+  tinyfilemanager:
+    image: tinyfilemanager/tinyfilemanager:master
+    container_name: tinyfilemanager
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      traefik.enable: "true"
+      traefik.http.routers.tinyfilemanager.entrypoints: "websecure"
+      traefik.http.routers.tinyfilemanager.rule: "Host(`cloud.${DOMAIN}`)"
+      traefik.http.routers.tinyfilemanager.service: "tinyfilemanager"
+      traefik.http.routers.tinyfilemanager.tls.certresolver: "letsencrypt"
+      traefik.http.services.tinyfilemanager.loadbalancer.server.port: "80"
+    volumes:
+      - "./tinyfilemanager/data:/var/www/html/data"
+      - "./tinyfilemanager/index.php:/var/www/html/index.php"
+      - "./tinyfilemanager/translation.json:/var/www/html/translation.json"
+
+networks:
+  default:
+    external: true
+    name: $NETWORK
